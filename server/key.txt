@@ -1,4 +1,0 @@
-Ew5r2TJ90Ged0Dz3
-danieldzotepe568_db_user
-
-mongodb+srv://danieldzotepe568_db_user:Ew5r2TJ90Ged0Dz3@backenddb.nm1zljw.mongodb.net/?appName=backenddb
