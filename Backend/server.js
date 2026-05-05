@@ -10,6 +10,9 @@ dotenv.config();
 
 const app = express();
 
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Error:', err));
 // Middleware
 app.use(helmet());
 // Complete CORS middleware
@@ -56,11 +59,6 @@ app.use('/api/crypto', require('./routes/crypto'));
 
 // Global error handler
 app.use(require('./utils/errorHandler'));
-
-// MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Error:', err));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

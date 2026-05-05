@@ -2,11 +2,15 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  name: {
+  firstName: {
     type: String,
-    required: [true, 'name is required'],
-    trim: true,
-    minlength: [1, 'name must be at least 2 characters']
+    required: [true, 'firstName is required'],
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Last name is required'],
+    trim: true
   },
   email: {
     type: String,
@@ -28,10 +32,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before save
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function() {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 // Compare password method

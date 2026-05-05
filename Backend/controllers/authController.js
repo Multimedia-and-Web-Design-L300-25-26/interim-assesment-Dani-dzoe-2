@@ -1,15 +1,16 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-exports.register = async (req, res, next) => {
+exports.register = async (req, res) => {
   try {
-    console.log('Received:', req.body);
+    const { firstName, lastName, email, password } = req.body;
 
-    const { name, email, password } = req.body;
-
+    console.log('Register data:', { firstName, lastName, email });
+    
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -20,7 +21,7 @@ exports.register = async (req, res, next) => {
     }
 
     // Create user
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ firstName, lastName, email, password });
 
     // Generate token
     const token = jwt.sign(
@@ -40,14 +41,16 @@ exports.register = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: 'User created successfully',
-      id: user._id,
-      name: user.name,
-      email: user.email
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      }
     });
   } catch (error) {
     console.error('Register Error:', error);
     res.status(400).json({ error: error.message });
-    next(error);
   }
 };
 
@@ -95,7 +98,8 @@ exports.login = async (req, res, next) => {
       message: 'Login successful',
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email
       }
     });
