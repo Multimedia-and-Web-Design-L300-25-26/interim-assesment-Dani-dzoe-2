@@ -1,45 +1,75 @@
-const Crypto = require("../models/Crypto");
+const Crypto = require('../models/Crypto');
 
-// GET ALL
-exports.getAllCrypto = async (req, res) => {
-  const cryptos = await Crypto.find();
-  res.json(cryptos);
-};
-
-// TOP GAINERS
-exports.getTopGainers = async (req, res) => {
-  const cryptos = await Crypto.find()
-    .sort({ change24h: -1 })
-    .limit(10);
-
-  res.json(cryptos);
-};
-
-// NEW LISTINGS
-exports.getNewListings = async (req, res) => {
-  const cryptos = await Crypto.find()
-    .sort({ createdAt: -1 })
-    .limit(10);
-
-  res.json(cryptos);
-};
-
-// CREATE
-exports.createCrypto = async (req, res) => {
-  const { name, symbol, price, image, change24h } = req.body;
-
+// @desc    Get all cryptocurrencies
+// @route   GET /api/crypto
+// @access  Public
+exports.getCryptos = async (req, res, next) => {
   try {
-    const crypto = await Crypto.create({
-      name,
-      symbol,
-      price,
-      image,
-      change24h,
+    const cryptos = await Crypto.find()
+      .sort({ createdAt: -1 })
+      .limit(50);
+    
+    res.status(200).json({
+      success: true,
+      count: cryptos.length,
+      data: cryptos
     });
-
-    res.status(201).json(crypto);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
-  
+
+// @desc    Get top gainers
+// @route   GET /api/crypto/gainers
+// @access  Public
+exports.getGainers = async (req, res, next) => {
+  try {
+    const gainers = await Crypto.find({ change24h: { $gt: 0 } })
+      .sort({ change24h: -1 })
+      .limit(10);
+    
+    res.status(200).json({
+      success: true,
+      count: gainers.length,
+      data: gainers
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get new listings
+// @route   GET /api/crypto/new
+// @access  Public
+exports.getNewListings = async (req, res, next) => {
+  try {
+    const newListings = await Crypto.find({ isNew: true })
+      .sort({ createdAt: -1 })
+      .limit(10);
+    
+    res.status(200).json({
+      success: true,
+      count: newListings.length,
+      data: newListings
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Create new cryptocurrency
+// @route   POST /api/crypto
+// @access  Private
+exports.createCrypto = async (req, res, next) => {
+  try {
+    const crypto = await Crypto.create(req.body);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Cryptocurrency created successfully',
+      data: crypto
+    });
+  } catch (error) {
+    next(error);
+  }
+};
