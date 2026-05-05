@@ -18,6 +18,7 @@ app.use(helmet());
 // Complete CORS middleware
 app.use((req, res, next) => {
   const allowedOrigins = [
+    'https://cryptocoin-backend.onrender.com',
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000'
@@ -50,6 +51,10 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
+});
+
+app.get("/", (req, res) => {
+  res.send("API is running");
 });
 
 // Routes
